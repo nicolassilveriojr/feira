@@ -1,195 +1,20 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Cyberpunk Flappy Bird</title>
-<style>
-  body {
-    margin: 0;
-    overflow: hidden;
-    background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-    font-family: Arial, sans-serif;
-  }
-
-  #gameCanvas {
-    display: block;
-    margin: 0 auto;
-    background-color: #000;
-  }
-
-  #difficultyContainer {
-    position: absolute;
-    top: 10px;
-    width: 100%;
-    text-align: center;
-    z-index: 10;
-  }
-
-  button {
-    padding: 10px 20px;
-    margin: 0 5px;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-    background-color: #00ffcc;
-    color: #000;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #00cccc;
-  }
-</style>
+    <meta charset="UTF-8">
+    <title>English Quiz Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="quiz-container">
+        <h1>English Quiz for Kids</h1>
+        <div id="question-container">
+            <p id="question">Question will appear here</p>
+            <div id="answer-buttons" class="btn-container"></div>
+        </div>
+        <button id="next-btn">Next</button>
+    </div>
 
-<div id="difficultyContainer">
-  <button onclick="startGame('easy')">Fácil</button>
-  <button onclick="startGame('medium')">Médio</button>
-  <button onclick="startGame('hard')">Difícil</button>
-</div>
-
-<canvas id="gameCanvas" width="600" height="400"></canvas>
-
-<script>
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-
-  let bird, pipes, score, gameOver, difficulty;
-  let gravity, pipeSpeed, pipeGap, pipeWidth, birdSize;
-
-  function startGame(level) {
-    difficulty = level;
-    // Configurações com base na dificuldade
-    if (difficulty === 'easy') {
-      gravity = 0.2;
-      pipeSpeed = 2;
-      pipeGap = 150;
-    } else if (difficulty === 'medium') {
-      gravity = 0.3;
-      pipeSpeed = 3;
-      pipeGap = 120;
-    } else { // hard
-      gravity = 0.4;
-      pipeSpeed = 4;
-      pipeGap = 100;
-    }
-
-    // Inicializa variáveis
-    bird = {
-      x: 100,
-      y: 200,
-      size: 20,
-      velocity: 0
-    };
-    pipes = [];
-    score = 0;
-    gameOver = false;
-
-    // Cria pipes iniciais
-    for (let i = 0; i < 3; i++) {
-      addPipe(600 + i * 200);
-    }
-
-    // Inicia o loop
-    if (typeof animationFrameId !== 'undefined') {
-      cancelAnimationFrame(animationFrameId);
-    }
-    gameLoop();
-  }
-
-  function addPipe(x) {
-    const topHeight = Math.random() * (canvas.height - pipeGap - 50) + 50;
-    pipes.push({ x: x, topHeight: topHeight });
-  }
-
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-      bird.velocity = -6;
-    }
-  });
-
-  document.addEventListener('click', () => {
-    bird.velocity = -6;
-  });
-
-  let animationFrameId;
-  function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Fundo cyberpunk
-    ctx.fillStyle = '#0f2027';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Desenhar o passarinho (um drone futurista)
-    ctx.fillStyle = '#0ff';
-    ctx.save();
-    ctx.translate(bird.x, bird.y);
-    ctx.rotate(Math.sin(Date.now() * 0.005) * 0.2); // movimento de oscilação
-    ctx.fillRect(-bird.size/2, -bird.size/2, bird.size, bird.size);
-    ctx.restore();
-
-    // Movimento do passarinho
-    bird.velocity += gravity;
-    bird.y += bird.velocity;
-
-    // Colisão com teto ou chão
-    if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
-      endGame();
-    }
-
-    // Desenhar e mover tubos
-    for (let i = pipes.length - 1; i >= 0; i--) {
-      let p = pipes[i];
-      p.x -= pipeSpeed;
-
-      // Tubo superior
-      ctx.fillStyle = '#ff00cc';
-      ctx.fillRect(p.x, 0, pipeWidth, p.topHeight);
-      // Tubo inferior
-      ctx.fillRect(p.x, p.topHeight + pipeGap, pipeWidth, canvas.height - p.topHeight - pipeGap);
-
-      // Checagem de colisão
-      if (
-        bird.x + bird.size/2 > p.x &&
-        bird.x - bird.size/2 < p.x + pipeWidth
-      ) {
-        if (
-          bird.y - bird.size/2 < p.topHeight ||
-          bird.y + bird.size/2 > p.topHeight + pipeGap
-        ) {
-          endGame();
-        }
-      }
-
-      // Remover tubos e aumentar pontuação
-      if (p.x + pipeWidth < 0) {
-        pipes.splice(i, 1);
-        addPipe(p.x + 600);
-        score++;
-      }
-    }
-
-    // Mostrar pontuação
-    ctx.fillStyle = '#fff';
-    ctx.font = '20px Arial';
-    ctx.fillText(`Pontuação: ${score}`, 10, 30);
-
-    if (!gameOver) {
-      animationFrameId = requestAnimationFrame(gameLoop);
-    } else {
-      ctx.fillStyle = '#fff';
-      ctx.font = '40px Arial';
-      ctx.fillText('Game Over', 200, 200);
-    }
-  }
-
-  function endGame() {
-    gameOver = true;
-  }
-</script>
-
+    <script src="script.js"></script>
 </body>
 </html>
