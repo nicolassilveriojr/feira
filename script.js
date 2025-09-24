@@ -1,6 +1,6 @@
 const questions = [
     {
-        question: "What color is the sky?",
+        question: "Qual a cor do céu?",
         answers: [
             { text: "Blue", correct: true },
             { text: "Red", correct: false },
@@ -9,7 +9,7 @@ const questions = [
         ]
     },
     {
-        question: "How many legs does a dog have?",
+        question: "Quantas pernas tem um cachorro?",
         answers: [
             { text: "Two", correct: false },
             { text: "Four", correct: true },
@@ -18,7 +18,7 @@ const questions = [
         ]
     },
     {
-        question: "Which animal says 'meow'?",
+        question: "Qual animal faz 'meow'?",
         answers: [
             { text: "Dog", correct: false },
             { text: "Cat", correct: true },
@@ -27,7 +27,7 @@ const questions = [
         ]
     },
     {
-        question: "What is the opposite of 'big'?",
+        question: "Qual o contrário de 'big'?",
         answers: [
             { text: "Tall", correct: false },
             { text: "Short", correct: false },
@@ -36,7 +36,7 @@ const questions = [
         ]
     },
     {
-        question: "What do you use to write?",
+        question: "O que você usa para escrever?",
         answers: [
             { text: "Fork", correct: false },
             { text: "Pencil", correct: true },
@@ -49,12 +49,18 @@ const questions = [
 const questionElement = document.getElementById("question");
 const answerButtons = document.getElementById("answer-buttons");
 const nextButton = document.getElementById("next-btn");
+const scoreContainer = document.getElementById("score-container");
+const scoreText = document.getElementById("score");
 
 let currentQuestionIndex = 0;
+let score = 0;
 
 function startQuiz() {
     currentQuestionIndex = 0;
-    nextButton.innerText = "Next";
+    score = 0;
+    scoreContainer.style.display = "none";
+    nextButton.innerText = "Próxima";
+    nextButton.style.display = "none";
     showQuestion();
 }
 
@@ -88,12 +94,11 @@ function selectAnswer(e) {
 
     Array.from(answerButtons.children).forEach(button => {
         setStatusClass(button, button.dataset.correct === "true");
+        button.disabled = true;
     });
 
     if (correct) {
-        selectedButton.classList.add("correct");
-    } else {
-        selectedButton.classList.add("wrong");
+        score++;
     }
 
     nextButton.style.display = "block";
@@ -124,10 +129,5 @@ nextButton.addEventListener("click", () => {
 
 function showScore() {
     resetState();
-    questionElement.innerText = "Quiz finished! Well done!";
-    nextButton.innerText = "Play Again";
-    nextButton.style.display = "block";
-    nextButton.onclick = startQuiz;
-}
-
-startQuiz();
+    questionElement.innerText = "Quiz finalizado! Parabéns!";
+    scoreText.innerText = `Você acertou ${score} de ${questions.length} pergun
