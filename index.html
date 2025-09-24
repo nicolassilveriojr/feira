@@ -119,50 +119,52 @@
   function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Desenhar o fundo cyberpunk
+    // Fundo cyberpunk
     ctx.fillStyle = '#0f2027';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Desenhar o pássaro
+    // Desenhar o passarinho (um drone futurista)
     ctx.fillStyle = '#0ff';
-    ctx.beginPath();
-    ctx.arc(bird.x, bird.y, bird.size, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.save();
+    ctx.translate(bird.x, bird.y);
+    ctx.rotate(Math.sin(Date.now() * 0.005) * 0.2); // movimento de oscilação
+    ctx.fillRect(-bird.size/2, -bird.size/2, bird.size, bird.size);
+    ctx.restore();
 
-    // Atualizar a posição do pássaro
+    // Movimento do passarinho
     bird.velocity += gravity;
     bird.y += bird.velocity;
 
-    // Verificar colisão com o chão ou teto
+    // Colisão com teto ou chão
     if (bird.y + bird.size > canvas.height || bird.y - bird.size < 0) {
       endGame();
     }
 
-    // Desenhar e mover os pipes
+    // Desenhar e mover tubos
     for (let i = pipes.length - 1; i >= 0; i--) {
       let p = pipes[i];
       p.x -= pipeSpeed;
 
-      // Desenhar tubo superior
+      // Tubo superior
       ctx.fillStyle = '#ff00cc';
       ctx.fillRect(p.x, 0, pipeWidth, p.topHeight);
-      // Desenhar tubo inferior
+      // Tubo inferior
       ctx.fillRect(p.x, p.topHeight + pipeGap, pipeWidth, canvas.height - p.topHeight - pipeGap);
 
-      // Checar colisão com tubos
+      // Checagem de colisão
       if (
-        bird.x + bird.size > p.x &&
-        bird.x - bird.size < p.x + pipeWidth
+        bird.x + bird.size/2 > p.x &&
+        bird.x - bird.size/2 < p.x + pipeWidth
       ) {
         if (
-          bird.y - bird.size < p.topHeight ||
-          bird.y + bird.size > p.topHeight + pipeGap
+          bird.y - bird.size/2 < p.topHeight ||
+          bird.y + bird.size/2 > p.topHeight + pipeGap
         ) {
           endGame();
         }
       }
 
-      // Remover pipes fora da tela e aumentar pontuação
+      // Remover tubos e aumentar pontuação
       if (p.x + pipeWidth < 0) {
         pipes.splice(i, 1);
         addPipe(p.x + 600);
@@ -170,7 +172,7 @@
       }
     }
 
-    // Exibir pontuação
+    // Mostrar pontuação
     ctx.fillStyle = '#fff';
     ctx.font = '20px Arial';
     ctx.fillText(`Pontuação: ${score}`, 10, 30);
